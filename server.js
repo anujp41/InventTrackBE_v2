@@ -3,7 +3,14 @@ const path = require('path');
 const PORT = process.env.PORT || 8000;
 const app = express();
 const routes = require('./routes');
+const cors = require('cors');
 
+const corsOptions = {
+  origin: 'http://trackthiscount.s3-website-us-east-1.amazonaws.com',
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
