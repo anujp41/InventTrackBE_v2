@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { Fruit } = require('./model');
 
 const getAllFruits = () => Fruit.findAll({ order: [['id', 'ASC']] });
-const getById = id => Fruit.findById(id);
+const getById = id => Fruit.findByPk(id);
 const returnAllFruits = res => getAllFruits().then(fruits => res.json(fruits));
 
 router.get('/', (req, res, next) => {

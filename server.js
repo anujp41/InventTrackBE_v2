@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/data', middleware, routes);
 
 app.use(function(err, req, res, next) {
-  console.log('Oh no, an error!');
+  console.log('Oh no, an error! ', err.stack);
   res.status(404).json({ error: 'Request failed!' });
 });
 
