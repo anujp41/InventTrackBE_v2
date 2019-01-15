@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const db = require('../db');
 
 const UserFruit = db.define(
-  'user-fruit',
+  'UserFruit',
   {
     count: {
       type: Sequelize.INTEGER,
