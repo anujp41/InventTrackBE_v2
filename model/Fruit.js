@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
-const db = require('./db');
+const db = require('../db');
 
-const FruitCount = db.define(
-  'fruit-count',
+const Fruit = db.define(
+  'fruit',
   {
     fruit: { type: Sequelize.STRING, unique: true },
     count: Sequelize.INTEGER
@@ -10,4 +10,4 @@ const FruitCount = db.define(
   { timestamps: false }
 );
 
-module.exports = { db, FruitCount };
+module.exports = Fruit;

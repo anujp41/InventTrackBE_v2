@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const { FruitCount } = require('./model');
+const { Fruit } = require('./model');
 
-const getAllFruits = () => FruitCount.findAll({ order: [['id', 'ASC']] });
-const getById = id => FruitCount.findById(id);
+const getAllFruits = () => Fruit.findAll({ order: [['id', 'ASC']] });
+const getById = id => Fruit.findById(id);
 const returnAllFruits = res => getAllFruits().then(fruits => res.json(fruits));
 
 router.get('/', (req, res, next) => {
@@ -24,9 +24,15 @@ router.get('/subtract/:id', (req, res, next) => {
 });
 
 router.post('/name/:id', (req, res, next) => {
-  FruitCount.update({ fruit: req.body.name }, { where: { id: req.params.id } })
+  Fruit.update({ fruit: req.body.name }, { where: { id: req.params.id } })
     .then(() => returnAllFruits(res))
     .catch(err => next(err));
+});
+
+router.post('/fruit', (req, res, next) => {
+  Fruit.create(req.body)
+    .then(() => returnAllFruits(res))
+    .catch(next);
 });
 
 module.exports = router;

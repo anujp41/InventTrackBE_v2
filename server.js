@@ -22,7 +22,7 @@ app.use(function(err, req, res, next) {
 app.listen(PORT, () => {
   console.log(`Server listening on PORT ${PORT}`);
   if (process.env.NODE_ENV === 'development') {
-    db.sync()
+    db.sync({ force: true })
       .then(() => console.log('Database created and table seeded!'))
       .catch(err => console.log('Trouble in db-land', err));
   } else {
