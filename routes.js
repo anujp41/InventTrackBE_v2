@@ -8,6 +8,7 @@ const returnAllFruits = res => getAllFruits().then(fruits => res.json(fruits));
 
 //Return all fruits
 router.get('/', (req, res, next) => {
+  console.log('received', req);
   returnAllFruits(res).catch(err => next(err));
 });
 
