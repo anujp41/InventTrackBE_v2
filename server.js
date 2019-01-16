@@ -1,7 +1,9 @@
 require('dotenv').config();
+const http = require('http');
 const express = require('express');
 const PORT = process.env.PORT || 8000;
 const app = express();
+const server = http.Server(app);
 const routes = require('./routes');
 const cors = require('cors');
 const middleware = require('./middleware');
@@ -12,6 +14,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+require('./socket')(server);
+
 app.use('/data', middleware, routes);
 
 app.use(function(err, req, res, next) {
@@ -19,7 +23,7 @@ app.use(function(err, req, res, next) {
   res.status(404).json({ error: 'Request failed!' });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on PORT ${PORT}`);
   if (process.env.NODE_ENV === 'development') {
     db.sync()
