@@ -4,6 +4,8 @@ const express = require('express');
 const PORT = process.env.PORT || 8000;
 const app = express();
 const server = http.Server(app);
+const socketIo = require('socket.io');
+const io = socketIo(server);
 const routes = require('./routes');
 const cors = require('cors');
 const middleware = require('./middleware');
@@ -14,7 +16,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-require('./socket')(server);
+io.on('connection', socket => app.set('socketIo', socket));
 
 app.use('/data', middleware, routes);
 

@@ -13,9 +13,13 @@ router.get('/', (req, res, next) => {
 
 //Increase count for selected fruit
 router.get('/add/:id', (req, res, next) => {
+  const socketIo = req.app.get('socketIo');
   getById(req.params.id)
     .then(fruit => fruit.increment('count', { by: 1 }))
-    .then(() => returnAllFruits(res))
+    .then(() => {
+      socketIo.emit('news', 'adding fruit');
+      return returnAllFruits(res);
+    })
     .catch(next);
 });
 
