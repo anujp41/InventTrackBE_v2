@@ -4,7 +4,7 @@ const db = require('../db');
 const Fruit = db.define(
   'fruit',
   {
-    fruit: { type: Sequelize.STRING, unique: true },
+    name: { type: Sequelize.STRING, unique: true },
     count: Sequelize.INTEGER
   },
   { timestamps: false }

@@ -1,6 +1,7 @@
-const { Op } = require('sequelize');
+const Sequelize = require('sequelize');
+const { Op, fn, col } = require('sequelize');
 const router = require('express').Router();
-const { Fruit } = require('./model');
+const { Fruit, UserFruit } = require('./model');
 
 const getAllFruits = () => Fruit.findAll({ order: [['id', 'ASC']] });
 const getById = id => Fruit.findByPk(id);
@@ -8,12 +9,44 @@ const returnAllFruits = res => getAllFruits().then(fruits => res.json(fruits));
 
 //Return all fruits
 router.get('/', (req, res, next) => {
-  returnAllFruits(res).catch(err => next(err));
+  req.app.get('socketIo').emit('news', 'Hola Hermano!');
+  returnAllFruits(res).catch(next);
 });
+
+//Return unclaimed fruits
+router.get('/remainder', (req, res, next) => {
+  Fruit.findAll().then(async fruits => {
+    const totalClaimed = {}; //object to store sum of all fruits claimed
+
+    await UserFruit.findAll().then(userFruit => {
+      userFruit.forEach(claimedFruit => {
+        const id = claimedFruit.fruitId;
+        const claimCount = claimedFruit.count;
+        totalClaimed[id]
+          ? (totalClaimed[id] += claimCount)
+          : (totalClaimed[id] = claimCount);
+      });
+    });
+    const totalRemaining = await fruits.map(fruit => {
+      const remainder = fruit.count - totalClaimed[fruit.id];
+      return { id: fruit.id, name: fruit.name, remainder };
+    });
+    res.json(totalRemaining);
+  });
+});
+
+//Sum of total claimed frutis
+// router.get('/claimed', (req, res, next) => {
+//   UserFruit.findAll({
+//     attributes: [Sequelize.fn('count', Sequelize.col('UserFruit.count'))],
+//     group: ['UserFruit.fruitId']
+//   }).then(fruit => res.json(fruit));
+// });
 
 //Increase count for selected fruit
 router.get('/add/:id', (req, res, next) => {
-  const socketIo = req.app.get('socketIo');
+  // const socketIo = req.app.get('socketIo');
+  // console.log('socketIo: ', socketIo);
   getById(req.params.id)
     .then(fruit => fruit.increment('count', { by: 1 }))
     .then(() => {

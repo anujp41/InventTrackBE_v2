@@ -1,6 +1,6 @@
 module.exports = [
-  { fruit: 'Apple', count: 15 },
-  { fruit: 'Mango', count: 7 },
-  { fruit: 'Cucumber', count: 12 },
-  { fruit: 'Papaya', count: 19 }
+  { name: 'Apple', count: 15 },
+  { name: 'Mango', count: 7 },
+  { name: 'Cucumber', count: 12 },
+  { name: 'Papaya', count: 19 }
 ];
