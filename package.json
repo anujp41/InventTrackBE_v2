@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "seed": "NODE_ENV=development node seed/index.js",
-    "echo-this": "echo"
+    "start-watch": "kill -9 $(lsof -t -i:8000) && nodemon server"
   },
   "author": "Inventory Crew",
   "license": "MIT",

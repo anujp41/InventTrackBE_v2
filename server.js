@@ -13,14 +13,9 @@ const io = socketIo(server);
 const db = require('./db');
 app.set('socketIo', io);
 
-// const db = require('./db');
-// const { User, Fruit, UserFruit } = require('./model');
-
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// io.on('connection', socket => app.set('socketIo', socket));
 
 // app.use(function(req, res, next) {
 //   req.io = io;
@@ -36,7 +31,7 @@ app.use(function(err, req, res, next) {
   res.status(404).json({ error: 'Request failed!' });
 });
 
-db.sync({ force: true }).then(() => console.log('Database refreshed!'));
+db.sync().then(() => console.log('Database refreshed!'));
 
 // server.listen(PORT, () => {
 //   console.log(`Server listening on PORT ${PORT}`);

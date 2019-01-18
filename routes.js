@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const { Op, fn, col } = require('sequelize');
 const router = require('express').Router();
 const { Fruit, UserFruit } = require('./model');
+const { addToSortedSet, getSortedSet } = require('./redis');
 
 const getAllFruits = () => Fruit.findAll({ order: [['id', 'ASC']] });
 const getById = id => Fruit.findByPk(id);
@@ -15,7 +16,7 @@ router.get('/', (req, res, next) => {
 
 //Return unclaimed fruits
 router.get('/remainder', (req, res, next) => {
-  Fruit.findAll().then(async fruits => {
+  Fruit.findAll({ attributes: ['id', 'count'] }).then(async fruits => {
     const totalClaimed = {}; //object to store sum of all fruits claimed
 
     await UserFruit.findAll().then(userFruit => {
@@ -29,8 +30,14 @@ router.get('/remainder', (req, res, next) => {
     });
     const totalRemaining = await fruits.map(fruit => {
       const remainder = fruit.count - totalClaimed[fruit.id];
-      return { id: fruit.id, name: fruit.name, remainder };
+      addToSortedSet(fruit.id, remainder); //.then(() => ({
+      //   id: fruit.id,
+      //   remainder
+      // }));
+      return { id: fruit.id, remainder };
     });
+    console.log('totalRemaining ', totalRemaining);
+    getSortedSet();
     res.json(totalRemaining);
   });
 });
