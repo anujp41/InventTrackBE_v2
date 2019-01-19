@@ -10,9 +10,8 @@ const sortedSetGetAsync = promisify(client.zrevrange).bind(client);
 const addToSortedSet = (id, count) =>
   addSortedSetAsync(dbKey, count, `fruit:${id}`);
 
-const getSortedSet = () =>
-  sortedSetGetAsync(dbKey, 0, -1, 'withscores').then(response =>
-    console.log('redis sorted set', response)
-  );
+const getSortedSet = () => sortedSetGetAsync(dbKey, 0, -1, 'withscores'); //.then(response =>
+//   console.log('redis sorted set', response)
+// );
 
 module.exports = { addToSortedSet, getSortedSet };
