@@ -1,18 +1,68 @@
 const Sequelize = require('sequelize');
-const { Op, fn, col } = require('sequelize');
+const { Op } = require('sequelize');
 const router = require('express').Router();
-const { Fruit, UserFruit } = require('./model');
+const { db, Fruit, User, UserFruit } = require('./model');
 const { addToSortedSet, getSortedSet } = require('./redis');
 
 const getAllFruits = () => Fruit.findAll({ order: [['id', 'ASC']] });
 const getById = id => Fruit.findByPk(id);
 const returnAllFruits = res => getAllFruits().then(fruits => res.json(fruits));
 
+/////TEST
+router.get('/fruitData', (req, res, next) => {
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+  UserFruit.findAll({
+    attributes: ['fruitId', Sequelize.fn('sum', Sequelize.col('counter'))],
+    group: ['fruitId'],
+    raw: true
+  })
+    .then(fruits => res.json(fruits))
+    .catch(next);
+  // Fruit.findAll({
+  //   attributes: ['name', Sequelize.fn('SUM', Sequelize.col('id'))],
+  //   group: ['name'],
+  //   raw: true
+  // })
+  //   .then(fruits => {
+  //     console.log('here are ', fruits);
+  //     res.json(fruits);
+  //   })
+  //   .catch(next);
+});
+
+// router.get('/allData', (req, res, next) => {
+//   UserFruit.findAll({
+//     include: {
+//       model: User,
+//       as: 'Owner'
+//     }
+//   }).then(allData => res.json(allData));
+// });
+
+// router.get('/allData', (req, res, next) => {
+//   Fruit.findAll({
+//     include: {
+//       model: User,
+//       through: {
+//         model: UserFruit
+//       }
+//     }
+//   }).then(allData => res.json(allData));
+// });
+
 //Return all fruits
 /** Gets current data from redis and get additional detail on each from SQL */
 router.get('/', (req, res, next) => {
-  req.app.get('socketIo').emit('news', 'Hola Hermano!');
+  const io = req.app.get('socketIo');
+  // console.log('clients ', io.clients());
+  // io.clients((error, clients) => {
+  //   if (error) throw error;
+  //   clients.emit();
+  //   console.log('clients: ', clients);
+  // });
+  io.emit('news', 'Hola Hermano!');
   getSortedSet().then(async resArray => {
+    console.log('the resArray ', resArray);
     const response = {};
     let currKey = null;
     for (let i = 0; i < resArray.length; i++) {

@@ -4,11 +4,11 @@ const User = require('./User');
 const UserFruit = require('./UserFruit');
 
 Fruit.belongsToMany(User, {
-  // as: 'Owner',
+  as: 'Owner',
   through: UserFruit
 });
 User.belongsToMany(Fruit, {
-  // as: 'Consumer',
+  as: 'Consumer',
   through: UserFruit
 });
 

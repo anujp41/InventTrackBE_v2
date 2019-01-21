@@ -11,6 +11,7 @@ const io = socketIo(server);
 const db = require('./db');
 app.set('socketIo', io);
 const onStartUp = require('./startUpFunc');
+require('pg').defaults.parseInt8 = true; //Required for pg library to return as data type that it reads (https://github.com/sequelize/sequelize/issues/2383#issuecomment-58006083)
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
