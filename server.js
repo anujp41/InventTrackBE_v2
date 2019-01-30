@@ -17,6 +17,10 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+io.on('connection', function(socket) {
+  require('./socket')(socket, io);
+});
+
 app.use('/data', middleware, routes);
 
 app.use(function(err, req, res, next) {
@@ -25,6 +29,7 @@ app.use(function(err, req, res, next) {
 });
 
 db.sync().then(() => {
+  console.log(`SERVER LISTENING ON ${PORT}`);
   onStartUp(); //after db is synced, run onStartUp function that populates redis cache
   console.log('Database refreshed!');
 });

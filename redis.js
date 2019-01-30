@@ -4,14 +4,23 @@ const client = redis.createClient(process.env.REDIS_PORT);
 client.flushall();
 const dbKey = process.env.REDIS_DB;
 
-const addSortedSetAsync = promisify(client.zadd).bind(client);
-const sortedSetGetAsync = promisify(client.zrevrange).bind(client);
+/**@function - async version of node-redis hash functions */
+const addHashAsync = promisify(client.hmset).bind(client);
+const getAllHashAsync = promisify(client.hgetall).bind(client);
 
+/**@function - add and get hash with multiple key/value pairs */
+const addToHash = (id, name, count) =>
+  addHashAsync(`fruit:${id}`, 'name', name, 'count', count);
+const getFromHash = id => getAllHashAsync(`fruit:${id}`);
+
+/**@function - async version of node-redis sorted set functions */
+const addSortedSetAsync = promisify(client.zadd).bind(client);
+const getSortedSetAsync = promisify(client.zrevrange).bind(client);
+
+//FUNCTIONS TO ADD AND GET SORTED SET
+/**@function - add and get sorted set */
 const addToSortedSet = (id, count) =>
   addSortedSetAsync(dbKey, count, `fruit:${id}`);
+const getSortedSet = () => getSortedSetAsync(dbKey, 0, -1, 'withscores');
 
-const getSortedSet = () => sortedSetGetAsync(dbKey, 0, -1, 'withscores'); //.then(response =>
-//   console.log('redis sorted set', response)
-// );
-
-module.exports = { addToSortedSet, getSortedSet };
+module.exports = { addToSortedSet, getSortedSet, addToHash, getFromHash };
