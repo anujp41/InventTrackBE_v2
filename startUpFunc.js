@@ -30,7 +30,6 @@ const onStartUp = async () => {
     ],
     group: ['fruitId'],
     raw: true
-    // order: [['fruitId', 'ASC']] //returns array with lower id at the top
   }).then(claimedFruits => {
     const claimedFruitsObj = {};
     claimedFruits.forEach(fruit => {

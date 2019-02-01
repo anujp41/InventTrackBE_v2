@@ -6,24 +6,48 @@ const controllers = require('./controller');
 //Return all fruits
 /** Gets current data from redis and get additional detail on each from SQL */
 router.get('/', (req, res, next) => {
-  controllers.getAllFruits().then(response => res.json(response));
+  controllers.getAllFruits().then(response => {
+    const resObj = response.reduce((aggregate, item) => {
+      aggregate[item.id] = item;
+      return aggregate;
+    }, {});
+    res.json(resObj);
+  });
 });
 
 //Increase count for selected fruit
 router.get('/add/:id', (req, res, next) => {
+  const ioObj = req.app.get('socketIo'); //io object from app
+  const currClient = req.headers.socket; //socket id who sent the curr request
+  const allClients = Object.keys(ioObj.sockets.sockets);
   controllers
     .getById(req.params.id)
     .then(fruit => fruit.increment('count', { by: 1 }))
-    .then(() => controllers.getAllFruits(res))
+    .then(responseData => {
+      allClients.forEach(client => {
+        client === currClient
+          ? res.json(responseData)
+          : ioObj.to(client).emit('updatedCount', responseData);
+      });
+    })
     .catch(next);
 });
 
 //Decrease count for selected fruit
 router.get('/subtract/:id', (req, res, next) => {
+  const ioObj = req.app.get('socketIo'); //io object from app
+  const currClient = req.headers.socket; //socket id who sent the curr request
+  const allClients = Object.keys(ioObj.sockets.sockets);
   controllers
     .getById(req.params.id)
     .then(fruit => fruit.decrement('count', { by: 1 }))
-    .then(() => controllers.getAllFruits(res))
+    .then(responseData => {
+      allClients.forEach(client => {
+        client === currClient
+          ? res.json(responseData)
+          : ioObj.to(client).emit('updatedCount', responseData);
+      });
+    })
     .catch(next);
 });
 
