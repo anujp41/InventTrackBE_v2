@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
 const router = require('express').Router();
-const controllers = require('./controller');
+const controllers = require('../controller');
 
 //Return all fruits
 /** Gets current data from redis and get additional detail on each from SQL */
