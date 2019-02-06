@@ -4,11 +4,11 @@ const { User, Fruit } = require('../model');
 const addlUserDetail = {
   include: [
     {
-      model: Fruit,
-      as: 'Consumer',
-      attributes: ['id', 'name'],
+      model: Fruit, // model to include with user(s)
+      as: 'Consumer', // alias for the user
+      attributes: ['id', 'name'], // defines the attributes to includes from associated Fruit Table
       through: {
-        attributes: ['counter']
+        attributes: ['counter'] // defines the attribute to include from join table
       }
     }
   ]
