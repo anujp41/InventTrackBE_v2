@@ -1,19 +1,22 @@
 const { User, UserFruit, Fruit } = require('../model');
 
+//Attribute Detail stores all relevant associated table & join table detail to
+const addlUserDetail = {
+  include: [
+    {
+      model: Fruit,
+      as: 'Consumer',
+      attributes: ['id', 'name'],
+      through: {
+        attributes: ['counter']
+      }
+    }
+  ]
+};
+
 module.exports = {
   getAllUsers() {
-    return User.findAll({
-      include: [
-        {
-          model: Fruit,
-          as: 'Consumer',
-          attributes: ['id', 'name'],
-          through: {
-            attributes: ['counter']
-          }
-        }
-      ]
-    }).then(users => {
+    return User.findAll(addlUserDetail).then(users => {
       return users;
     });
   },
@@ -30,18 +33,7 @@ module.exports = {
     });
   },
   getById(id) {
-    return User.findById(id, {
-      include: [
-        {
-          model: Fruit,
-          as: 'Consumer',
-          attributes: ['id', 'name'],
-          through: {
-            attributes: ['counter']
-          }
-        }
-      ]
-    });
+    return User.findById(id, addlUserDetail);
   },
   //Test function to find user first and get associated consumer
   //Only for testing; doesn't figure into userRoute.js file
