@@ -1,5 +1,5 @@
-const { db, Fruit, User, UserFruit } = require('./model');
-const { addToSortedSet, getSortedSet, getFromHash } = require('./redis');
+const { db, Fruit, User, UserFruit } = require('../model');
+const { addToSortedSet, getSortedSet, getFromHash } = require('../redis');
 
 module.exports = {
   getAllFruits() {

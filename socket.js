@@ -1,4 +1,4 @@
-const controllerOps = require('./controller');
+const { fruitControllers } = require('./controllers');
 
 module.exports = async function(socket, io) {
   // console.log('connected ', socket);

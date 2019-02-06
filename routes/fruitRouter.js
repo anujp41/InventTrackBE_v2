@@ -1,12 +1,11 @@
-const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
 const router = require('express').Router();
-const controllers = require('../controller');
+const { fruitControllers } = require('../controllers');
 
 //Return all fruits
 /** Gets current data from redis and get additional detail on each from SQL */
 router.get('/', (req, res, next) => {
-  controllers.getAllFruits().then(response => {
+  fruitControllers.getAllFruits().then(response => {
     const resObj = response.reduce((aggregate, item) => {
       aggregate[item.id] = item;
       return aggregate;
@@ -20,7 +19,7 @@ router.get('/add/:id', (req, res, next) => {
   const ioObj = req.app.get('socketIo'); //io object from app
   const currClient = req.headers.socket; //socket id who sent the curr request
   const allClients = Object.keys(ioObj.sockets.sockets);
-  controllers
+  fruitControllers
     .getById(req.params.id)
     .then(fruit => fruit.increment('count', { by: 1 }))
     .then(responseData => {
@@ -38,7 +37,7 @@ router.get('/subtract/:id', (req, res, next) => {
   const ioObj = req.app.get('socketIo'); //io object from app
   const currClient = req.headers.socket; //socket id who sent the curr request
   const allClients = Object.keys(ioObj.sockets.sockets);
-  controllers
+  fruitControllers
     .getById(req.params.id)
     .then(fruit => fruit.decrement('count', { by: 1 }))
     .then(responseData => {
