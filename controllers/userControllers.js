@@ -1,4 +1,4 @@
-const { User, UserFruit, Fruit } = require('../model');
+const { User, Fruit } = require('../model');
 
 //Attribute Detail stores all relevant associated table & join table detail to
 const addlUserDetail = {
@@ -20,6 +20,10 @@ module.exports = {
       return users;
     });
   },
+  getById(id) {
+    return User.findById(id, addlUserDetail);
+  },
+  //FUNCTIONS BELOW ARE ATTEMPTS TO REWRITE FUNCTIONS ABOVE IN DIFFERENT WAY
   //Test function to get all users and then getConsumer as promise
   // This function will have promise that resolve with getPlain for each user
   // and getConsumer alongside each user
@@ -31,9 +35,6 @@ module.exports = {
         return { users, userData };
       });
     });
-  },
-  getById(id) {
-    return User.findById(id, addlUserDetail);
   },
   //Test function to find user first and get associated consumer
   //Only for testing; doesn't figure into userRoute.js file
