@@ -12,6 +12,7 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
+    "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",

@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { db, Fruit, User, UserFruit } = require('../model');
 const { addToSortedSet, getSortedSet, getFromHash } = require('../redis');
 
@@ -25,5 +26,8 @@ module.exports = {
       }
       return response;
     });
+  },
+  removeFruit(id) {
+    return Fruit.destroy({ where: { id: { [Op.eq]: id } } });
   }
 };

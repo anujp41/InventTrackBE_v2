@@ -1,4 +1,11 @@
-const { User, Fruit } = require('../model');
+const { Op } = require('sequelize');
+const { User, Fruit, UserFruit } = require('../model');
+const {
+  addToSortedSet,
+  getFromHash,
+  getSortedSet,
+  getZScore
+} = require('../redis');
 
 //Attribute Detail stores all relevant associated table & join table detail to
 const addlUserDetail = {
@@ -8,7 +15,8 @@ const addlUserDetail = {
       as: 'Consumer', // alias for the user
       attributes: ['id', 'name'], // defines the attributes to includes from associated Fruit Table
       through: {
-        attributes: ['counter'] // defines the attribute to include from join table
+        attributes: ['counter'], // defines the attribute to include from join table
+        where: { counter: { [Op.gt]: 0 } } //ensure that only fruits that owner has more than 0 will be responded with
       }
     }
   ]
@@ -22,6 +30,27 @@ module.exports = {
   },
   getById(id) {
     return User.findById(id, addlUserDetail);
+  },
+  updateFruit({ userId, fruitId: id }) {
+    return Promise.resolve(
+      getZScore(id).then(totalFruit => {
+        totalFruit = parseInt(totalFruit);
+        console.log('totalFruit ', totalFruit);
+        if (totalFruit <= 0) return 'All taken';
+        addToSortedSet(id, totalFruit - 1)
+          .then(() =>
+            UserFruit.findOne({
+              where: { fruitId: id, userId }
+            })
+          )
+          .then(userFruit => {
+            getSortedSet().then(sorted => console.log('new data is ', sorted));
+            userFruit.increment('counter', { by: 1 });
+          })
+          .then(() => 'Completed');
+      })
+      // .then(newCount => console.log('my new count is ', newCount))
+    );
   },
   //FUNCTIONS BELOW ARE ATTEMPTS TO REWRITE FUNCTIONS ABOVE IN DIFFERENT WAY
   //Test function to get all users and then getConsumer as promise

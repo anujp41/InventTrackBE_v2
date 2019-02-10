@@ -5,17 +5,19 @@ const app = express();
 const socketIo = require('socket.io');
 const routes = require('./routes');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const middleware = require('./middleware');
 const server = app.listen(PORT);
 const io = socketIo(server);
 const db = require('./db');
 app.set('socketIo', io);
 const onStartUp = require('./startUpFunc');
-require('pg').defaults.parseInt8 = true; //Required for pg library to return as data type that it reads (https://github.com/sequelize/sequelize/issues/2383#issuecomment-58006083)
+// require('pg').defaults.parseInt8 = true; //Required for pg library to return as data type that it reads (https://github.com/sequelize/sequelize/issues/2383#issuecomment-58006083)
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 io.on('connection', function(socket) {
   require('./socket')(socket, io);

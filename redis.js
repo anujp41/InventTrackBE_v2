@@ -16,11 +16,19 @@ const getFromHash = id => getAllHashAsync(`fruit:${id}`);
 /**@function - async version of node-redis sorted set functions */
 const addSortedSetAsync = promisify(client.zadd).bind(client);
 const getSortedSetAsync = promisify(client.zrevrange).bind(client);
+const getZScoreAsync = promisify(client.zscore).bind(client);
 
 //FUNCTIONS TO ADD AND GET SORTED SET
 /**@function - add and get sorted set */
 const addToSortedSet = (id, count) =>
-  addSortedSetAsync(dbKey, count, `fruit:${id}`);
+  Promise.resolve(addSortedSetAsync(dbKey, count, `fruit:${id}`));
 const getSortedSet = () => getSortedSetAsync(dbKey, 0, -1, 'withscores');
+const getZScore = id => getZScoreAsync(dbKey, `fruit:${id}`);
 
-module.exports = { addToSortedSet, getSortedSet, addToHash, getFromHash };
+module.exports = {
+  addToSortedSet,
+  getSortedSet,
+  getZScore,
+  addToHash,
+  getFromHash
+};
