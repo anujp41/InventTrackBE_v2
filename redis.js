@@ -1,6 +1,7 @@
-const redis = require('redis');
+const redis = require('ioredis');
+const redisAddress = process.env.REDIS_ADDRESS || process.env.LOCAL_ADDRESS;
 const { promisify } = require('util');
-const client = redis.createClient(process.env.REDIS_PORT);
+const client = redis.createClient(redisAddress);
 client.flushall();
 const dbKey = process.env.REDIS_DB;
 
@@ -17,6 +18,7 @@ const getFromHash = id => getAllHashAsync(`fruit:${id}`);
 const addSortedSetAsync = promisify(client.zadd).bind(client);
 const getSortedSetAsync = promisify(client.zrevrange).bind(client);
 const getZScoreAsync = promisify(client.zscore).bind(client);
+const incSortedSetBy = promisify(client.zincrby).bind(client);
 
 //FUNCTIONS TO ADD AND GET SORTED SET
 /**@function - add and get sorted set */
@@ -24,11 +26,14 @@ const addToSortedSet = (id, count) =>
   Promise.resolve(addSortedSetAsync(dbKey, count, `fruit:${id}`));
 const getSortedSet = () => getSortedSetAsync(dbKey, 0, -1, 'withscores');
 const getZScore = id => getZScoreAsync(dbKey, `fruit:${id}`);
+const incSortedSet = (id, count) => incSortedSetBy(dbKey, count, `fruit:${id}`);
 
 module.exports = {
+  client,
   addToSortedSet,
   getSortedSet,
   getZScore,
   addToHash,
-  getFromHash
+  getFromHash,
+  incSortedSet
 };

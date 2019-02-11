@@ -1,14 +1,20 @@
 const router = require('express').Router();
-const { userControllers } = require('../controllers');
+const { userControllers, fruitControllers } = require('../controllers');
 
 router.get('/', (req, res) => {
   userControllers.getAllUsers().then(users => res.json(users));
 });
 
 router.put('/', (req, res) => {
-  userControllers.updateFruit(req.body).then(response => {
-    res.send(response === 'All taken' ? 'Gone' : 'Done');
-  });
+  const ioObj = req.app.get('socketIo');
+  userControllers
+    .updateFruit(req.body)
+    .then(response => {
+      res.send(response === 'All taken' ? 'Gone' : 'Done');
+    })
+    .then(async () =>
+      ioObj.emit('remainder', await fruitControllers.getAllRemainder())
+    );
 });
 
 router.get('/:id', (req, res) => {

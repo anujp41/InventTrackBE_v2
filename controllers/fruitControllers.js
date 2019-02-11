@@ -1,6 +1,12 @@
 const { Op } = require('sequelize');
 const { db, Fruit, User, UserFruit } = require('../model');
-const { addToSortedSet, getSortedSet, getFromHash } = require('../redis');
+const {
+  getZScore,
+  addToSortedSet,
+  getSortedSet,
+  getFromHash,
+  incSortedSet
+} = require('../redis');
 
 module.exports = {
   getAllFruits() {
@@ -8,6 +14,9 @@ module.exports = {
   },
   getById(id) {
     return Fruit.findByPk(id);
+  },
+  updateCount(id, toDo = 'add') {
+    return incSortedSet(id, toDo === 'add' ? 1 : -1);
   },
   getAllRemainder() {
     //gets remainder from redis cache

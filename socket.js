@@ -1,4 +1,5 @@
 const { fruitControllers } = require('./controllers');
+const { client } = require('./redis');
 
 module.exports = function(socket, io) {
   // console.log('connected ', socket);

@@ -42,10 +42,7 @@ module.exports = {
               where: { fruitId: id, userId }
             })
           )
-          .then(userFruit => {
-            getSortedSet().then(sorted => console.log('new data is ', sorted));
-            userFruit.increment('counter', { by: 1 });
-          })
+          .then(userFruit => userFruit.increment('counter', { by: 1 }))
           .then(() => 'Completed');
       })
       // .then(newCount => console.log('my new count is ', newCount))

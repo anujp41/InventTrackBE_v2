@@ -20,14 +20,19 @@ router.get('/add/:id', (req, res, next) => {
   const currClient = req.headers.socket; //socket id who sent the curr request
   fruitControllers
     .getById(req.params.id)
-    .then(fruit => fruit.increment('count', { by: 1 }))
-    .then(responseData => {
+    .then(async fruit => {
+      await fruitControllers.updateCount(req.params.id);
+      return await fruit.increment('count', { by: 1 });
+    })
+    .then(async responseData => {
       const response = responseData.get({ plain: true });
       const resObj = {
         socketId: currClient,
         response
       };
-      ioObj.emit('updatedCount', resObj);
+      ioObj
+        .emit('updatedCount', resObj)
+        .emit('remainder', await fruitControllers.getAllRemainder());
       res.send(200);
     })
     .catch(next);
@@ -39,14 +44,19 @@ router.get('/subtract/:id', (req, res, next) => {
   const currClient = req.headers.socket; //socket id who sent the curr request
   fruitControllers
     .getById(req.params.id)
-    .then(fruit => fruit.decrement('count', { by: 1 }))
-    .then(responseData => {
+    .then(async fruit => {
+      fruitControllers.updateCount(req.params.id, 'subtract');
+      return await fruit.decrement('count', { by: 1 });
+    })
+    .then(async responseData => {
       const response = responseData.get({ plain: true });
       const resObj = {
         socketId: currClient,
         response
       };
-      ioObj.emit('updatedCount', resObj);
+      ioObj
+        .emit('updatedCount', resObj)
+        .emit('remainder', await fruitControllers.getAllRemainder());
       res.send(200);
     })
     .catch(next);

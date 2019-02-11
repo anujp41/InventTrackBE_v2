@@ -12,6 +12,7 @@ const seed = () => {
     .then(() => {
       console.log('Seeding complete!');
       db.close();
-    });
+    })
+    .catch(() => db.close());
 };
 seed();
