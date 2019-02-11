@@ -7,8 +7,7 @@ router.get('/', (req, res) => {
 
 router.put('/', (req, res) => {
   userControllers.updateFruit(req.body).then(response => {
-    console.log('response is ', response);
-    res.send(response === 'All taken' ? 400 : 200);
+    res.send(response === 'All taken' ? 'Gone' : 'Done');
   });
 });
 

@@ -21,6 +21,7 @@ app.use(cookieParser());
 
 io.on('connection', function(socket) {
   require('./socket')(socket, io);
+  // socket.emit('hello', 'ding dong');
 });
 
 app.use('/data', middleware, routes);

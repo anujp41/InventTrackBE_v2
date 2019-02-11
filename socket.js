@@ -1,6 +1,6 @@
 const { fruitControllers } = require('./controllers');
 
-module.exports = async function(socket, io) {
+module.exports = function(socket, io) {
   // console.log('connected ', socket);
   // EXAMPLE OF OPERATIONS THAT CAN BE PERFORMED ON SOCKETS
   // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
@@ -11,4 +11,8 @@ module.exports = async function(socket, io) {
   // socket.on('disconnect', function() {
   //   console.log('disconnected', socket.id);
   // });
+  socket.on('getData', async data => {
+    console.log(`${socket.id} requested remaining fruits!`);
+    socket.emit('remainder', await fruitControllers.getAllRemainder());
+  });
 };

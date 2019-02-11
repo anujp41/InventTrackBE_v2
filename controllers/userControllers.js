@@ -35,7 +35,6 @@ module.exports = {
     return Promise.resolve(
       getZScore(id).then(totalFruit => {
         totalFruit = parseInt(totalFruit);
-        console.log('totalFruit ', totalFruit);
         if (totalFruit <= 0) return 'All taken';
         addToSortedSet(id, totalFruit - 1)
           .then(() =>
