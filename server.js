@@ -11,29 +11,27 @@ const middleware = require('./middleware');
 const server = app.listen(PORT);
 const io = socketIo(server);
 const db = require('./db');
+const morgan = require('morgan');
 app.set('socketIo', io);
 const onStartUp = require('./startUpFunc');
 // const seed = require('./seed');
 // require('pg').defaults.parseInt8 = true; //Required for pg library to return as data type that it reads (https://github.com/sequelize/sequelize/issues/2383#issuecomment-58006083)
 
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('public'));
-}
+app.use(express.static('public'));
 
 io.on('connection', function(socket) {
   require('./socket')(socket, io);
-  // socket.emit('hello', 'ding dong');
 });
 
 app.use('/data', middleware, routes);
 
-app.get('*', (req, res) => {
-  console.log('here ', path.join(__dirname, './public/index.html'));
-  res.sendFile(path.join(__dirname, './public/index.html'));
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.use(function(err, req, res, next) {
