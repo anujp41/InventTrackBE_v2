@@ -9,7 +9,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const middleware = require('./middleware');
 const server = app.listen(PORT);
-console.log('mu server is ', server);
 const io = socketIo(server);
 const db = require('./db');
 const morgan = require('morgan');
