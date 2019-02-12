@@ -8,6 +8,7 @@ const routes = require('./routes');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const middleware = require('./middleware');
+console.log('mu port is ', PORT);
 const server = app.listen(PORT);
 const io = socketIo(server);
 const db = require('./db');
