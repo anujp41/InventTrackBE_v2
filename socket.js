@@ -2,6 +2,7 @@ const { fruitControllers } = require('./controllers');
 const { client } = require('./redis');
 
 module.exports = function(socket, io) {
+  socket.emit('connected ', 'i am connected!');
   // console.log('connected ', socket);
   // EXAMPLE OF OPERATIONS THAT CAN BE PERFORMED ON SOCKETS
   // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');

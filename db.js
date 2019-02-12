@@ -7,16 +7,7 @@ if (process.env.NODE_ENV === 'development') {
     logging: false
   });
 } else {
-  db = new Sequelize(
-    process.env.RDS_DB_NAME,
-    process.env.RDS_USERNAME,
-    process.env.RDS_PASSWORD,
-    {
-      host: process.env.RDS_HOSTNAME,
-      dialect: 'postgres',
-      logging: false
-    }
-  );
+  db = new Sequelize(process.env.DATABASE_URL);
 }
 
 module.exports = db;

@@ -1,5 +1,5 @@
 const redis = require('ioredis');
-const redisAddress = process.env.REDIS_ADDRESS || process.env.LOCAL_ADDRESS;
+const redisAddress = process.env.REDIS_URL || process.env.LOCAL_ADDRESS;
 const { promisify } = require('util');
 const client = redis.createClient(redisAddress);
 client.flushall();

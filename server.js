@@ -18,6 +18,9 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('public'));
+}
 
 io.on('connection', function(socket) {
   require('./socket')(socket, io);
@@ -25,6 +28,10 @@ io.on('connection', function(socket) {
 });
 
 app.use('/data', middleware, routes);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'));
+});
 
 app.use(function(err, req, res, next) {
   console.log('Oh no, an error! ', err.stack);
