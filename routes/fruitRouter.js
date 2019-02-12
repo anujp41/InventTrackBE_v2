@@ -10,7 +10,6 @@ router.get('/', (req, res, next) => {
       aggregate[item.id] = item;
       return aggregate;
     }, {});
-    console.log('getting all fruits! ', resObj);
     res.json(resObj);
   });
 });
