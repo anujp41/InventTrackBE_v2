@@ -16,37 +16,61 @@ const addlUserDetail = {
       attributes: ['id', 'name'], // defines the attributes to includes from associated Fruit Table
       through: {
         attributes: ['counter'], // defines the attribute to include from join table
-        where: { counter: { [Op.gt]: 0 } } //ensure that only fruits that owner has more than 0 will be responded with
+        where: { counter: { [Op.gte]: 0 } } //ensure that only fruits that owner has more than 0 will be responded with
       }
     }
   ]
 };
 
 module.exports = {
+  gettingAllUser() {
+    return User.findAll(addlUserDetail).then(async users => {
+      const allFruits = await Fruit.findAll({
+        attributes: ['id', 'name'],
+        raw: true
+      });
+      const userDV = users.map(user => user.dataValues);
+      userDV.forEach(user =>
+        user.Consumer.forEach(consumer =>
+          console.log('here', user.name, ' loves ', consumer.name)
+        )
+      );
+      console.log('allFruits ', userDV);
+      return users;
+    });
+  },
   getAllUsers() {
     return User.findAll(addlUserDetail).then(users => {
-      return users;
+      const userObj = users
+        .map(user => user.toJSON()) //converts to plain JSON to remove metadata
+        .reduce((acc, user) => {
+          //convert array to object with id as key
+          acc[user.id] = user;
+          return acc;
+        }, {});
+      return userObj;
     });
   },
   getById(id) {
     return User.findById(id, addlUserDetail);
   },
   updateFruit({ userId, fruitId: id }) {
-    return Promise.resolve(
-      getZScore(id).then(totalFruit => {
-        totalFruit = parseInt(totalFruit);
-        if (totalFruit <= 0) return 'All taken';
-        addToSortedSet(id, totalFruit - 1)
+    return getZScore(id).then(async totalFruit => {
+      totalFruit = parseInt(totalFruit);
+      if (totalFruit <= 0) {
+        return { message: 'All taken' };
+      } else {
+        let updateCount = await addToSortedSet(id, totalFruit - 1)
           .then(() =>
             UserFruit.findOne({
               where: { fruitId: id, userId }
             })
           )
-          .then(userFruit => userFruit.increment('counter', { by: 1 }))
-          .then(() => 'Completed');
-      })
-      // .then(newCount => console.log('my new count is ', newCount))
-    );
+          .then(userFruit => userFruit.increment('counter', { by: 1 }));
+        updateCount = updateCount.toJSON();
+        return { message: 'Completed', updateCount };
+      }
+    });
   }
   /*
   //FUNCTIONS BELOW ARE ATTEMPTS TO REWRITE FUNCTIONS ABOVE IN DIFFERENT WAY
