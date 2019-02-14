@@ -16,16 +16,39 @@ const addlUserDetail = {
       attributes: ['id', 'name'], // defines the attributes to includes from associated Fruit Table
       through: {
         attributes: ['counter'], // defines the attribute to include from join table
-        where: { counter: { [Op.gt]: 0 } } //ensure that only fruits that owner has more than 0 will be responded with
+        where: { counter: { [Op.gte]: 0 } } //ensure that only fruits that owner has more than 0 will be responded with
       }
     }
   ]
 };
 
 module.exports = {
+  gettingAllUser() {
+    return User.findAll(addlUserDetail).then(async users => {
+      const allFruits = await Fruit.findAll({
+        attributes: ['id', 'name'],
+        raw: true
+      });
+      const userDV = users.map(user => user.dataValues);
+      userDV.forEach(user =>
+        user.Consumer.forEach(consumer =>
+          console.log('here', user.name, ' loves ', consumer.name)
+        )
+      );
+      console.log('allFruits ', userDV);
+      return users;
+    });
+  },
   getAllUsers() {
     return User.findAll(addlUserDetail).then(users => {
-      return users;
+      const userObj = users
+        .map(user => user.toJSON()) //converts to plain JSON to remove metadata
+        .reduce((acc, user) => {
+          //convert array to object with id as key
+          acc[user.id] = user;
+          return acc;
+        }, {});
+      return userObj;
     });
   },
   getById(id) {

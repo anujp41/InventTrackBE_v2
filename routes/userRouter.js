@@ -5,6 +5,10 @@ router.get('/', (req, res) => {
   userControllers.getAllUsers().then(users => res.json(users));
 });
 
+router.get('/all', (req, res) => {
+  userControllers.gettingAllUser().then(users => res.json(users));
+});
+
 router.put('/', (req, res) => {
   const ioObj = req.app.get('socketIo');
   userControllers
