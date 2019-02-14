@@ -55,21 +55,22 @@ module.exports = {
     return User.findById(id, addlUserDetail);
   },
   updateFruit({ userId, fruitId: id }) {
-    return Promise.resolve(
-      getZScore(id).then(totalFruit => {
-        totalFruit = parseInt(totalFruit);
-        if (totalFruit <= 0) return 'All taken';
-        addToSortedSet(id, totalFruit - 1)
+    return getZScore(id).then(async totalFruit => {
+      totalFruit = parseInt(totalFruit);
+      if (totalFruit <= 0) {
+        return { message: 'All taken' };
+      } else {
+        let updateCount = await addToSortedSet(id, totalFruit - 1)
           .then(() =>
             UserFruit.findOne({
               where: { fruitId: id, userId }
             })
           )
-          .then(userFruit => userFruit.increment('counter', { by: 1 }))
-          .then(() => 'Completed');
-      })
-      // .then(newCount => console.log('my new count is ', newCount))
-    );
+          .then(userFruit => userFruit.increment('counter', { by: 1 }));
+        updateCount = updateCount.toJSON();
+        return { message: 'Completed', updateCount };
+      }
+    });
   }
   /*
   //FUNCTIONS BELOW ARE ATTEMPTS TO REWRITE FUNCTIONS ABOVE IN DIFFERENT WAY
