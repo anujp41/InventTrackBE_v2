@@ -90,7 +90,6 @@ router.post('/', (req, res, next) => {
   fruitControllers
     .saveFruit(req.body)
     .then(response => {
-      console.log('doning htis', response);
       res.sendStatus(200);
       // res.json({ msg: 'done' });
     })
