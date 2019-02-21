@@ -23,22 +23,6 @@ const addlUserDetail = {
 };
 
 module.exports = {
-  gettingAllUser() {
-    return User.findAll(addlUserDetail).then(async users => {
-      const allFruits = await Fruit.findAll({
-        attributes: ['id', 'name'],
-        raw: true
-      });
-      const userDV = users.map(user => user.dataValues);
-      userDV.forEach(user =>
-        user.Consumer.forEach(consumer =>
-          console.log('here', user.name, ' loves ', consumer.name)
-        )
-      );
-      console.log('allFruits ', userDV);
-      return users;
-    });
-  },
   getAllUsers() {
     return User.findAll(addlUserDetail).then(users => {
       const userObj = users
@@ -70,6 +54,23 @@ module.exports = {
         updateCount = updateCount.toJSON();
         return { message: 'Completed', updateCount };
       }
+    });
+  },
+  //TEST FUNCTION - ROUTE IS NOT CALLED IN FRONT-END
+  gettingAllUser() {
+    return User.findAll(addlUserDetail).then(async users => {
+      const allFruits = await Fruit.findAll({
+        attributes: ['id', 'name'],
+        raw: true
+      });
+      const userDV = users.map(user => user.dataValues);
+      userDV.forEach(user =>
+        user.Consumer.forEach(consumer =>
+          console.log('here', user.name, ' loves ', consumer.name)
+        )
+      );
+      console.log('allFruits ', userDV);
+      return users;
     });
   }
   /*

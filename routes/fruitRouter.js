@@ -86,9 +86,14 @@ router.post('/name/:id', (req, res, next) => {
 });
 
 //Add new fruit
-router.post('/fruit', (req, res, next) => {
-  Fruit.create(req.body)
-    .then(() => returnAllFruits(res))
+router.post('/', (req, res, next) => {
+  fruitControllers
+    .saveFruit(req.body)
+    .then(response => {
+      console.log('doning htis', response);
+      res.sendStatus(200);
+      // res.json({ msg: 'done' });
+    })
     .catch(next);
 });
 

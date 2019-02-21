@@ -38,5 +38,15 @@ module.exports = {
   },
   removeFruit(id) {
     return Fruit.destroy({ where: { id: { [Op.eq]: id } } });
+  },
+  saveFruit(newFruit) {
+    const { name } = newFruit;
+    return Fruit.findOrCreate({
+      where: { name: { [Op.iLike]: name } },
+      defaults: newFruit
+    }).spread((fruit, created) => {
+      console.log('created', created);
+      return;
+    });
   }
 };
