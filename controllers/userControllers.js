@@ -72,6 +72,16 @@ module.exports = {
       console.log('allFruits ', userDV);
       return users;
     });
+  },
+  saveUser(newUser) {
+    const { name } = newUser;
+    return User.findOrCreate({
+      where: { name: { [Op.iLike]: name } },
+      defaults: newUser
+    }).spread((user, created) => ({
+      user: user.get({ plain: true }),
+      created
+    }));
   }
   /*
   //FUNCTIONS BELOW ARE ATTEMPTS TO REWRITE FUNCTIONS ABOVE IN DIFFERENT WAY

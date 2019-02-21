@@ -44,9 +44,9 @@ module.exports = {
     return Fruit.findOrCreate({
       where: { name: { [Op.iLike]: name } },
       defaults: newFruit
-    }).spread((fruit, created) => {
-      console.log('created', created);
-      return;
-    });
+    }).spread((fruit, created) => ({
+      fruit: fruit.get({ plain: true }),
+      created
+    }));
   }
 };

@@ -26,4 +26,14 @@ router.get('/:id', (req, res) => {
   userControllers.getById(id).then(user => res.json(user));
 });
 
+//Add new user
+router.post('/', (req, res, next) => {
+  userControllers
+    .saveUser(req.body)
+    .then(({ user, created }) => {
+      if (!created) return res.json({ msg: 'exists' });
+    })
+    .catch(next);
+});
+
 module.exports = router;

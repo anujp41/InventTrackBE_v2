@@ -89,9 +89,8 @@ router.post('/name/:id', (req, res, next) => {
 router.post('/', (req, res, next) => {
   fruitControllers
     .saveFruit(req.body)
-    .then(response => {
-      res.sendStatus(200);
-      // res.json({ msg: 'done' });
+    .then(({ fruit, created }) => {
+      if (!created) return res.json({ msg: 'exists' });
     })
     .catch(next);
 });
