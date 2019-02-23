@@ -87,10 +87,12 @@ router.post('/name/:id', (req, res, next) => {
 
 //Add new fruit
 router.post('/', (req, res, next) => {
+  const ioObj = req.app.get('socketIo');
   fruitControllers
     .saveFruit(req.body)
     .then(({ fruit, created }) => {
       if (!created) return res.json({ msg: 'exists' });
+      ioObj.emit('updateThis');
     })
     .catch(next);
 });

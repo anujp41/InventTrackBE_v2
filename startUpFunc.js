@@ -43,6 +43,7 @@ const onStartUp = async () => {
     await addToHash(id, name, count);
     await addToSortedSet(id, remainder);
   });
+  return 'redis done!';
 };
 
 module.exports = onStartUp;

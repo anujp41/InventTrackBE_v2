@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const { db, Fruit, User, UserFruit } = require('../model');
 const {
   getZScore,
+  addToHash,
   addToSortedSet,
   getSortedSet,
   getFromHash,
@@ -44,9 +45,19 @@ module.exports = {
     return Fruit.findOrCreate({
       where: { name: { [Op.iLike]: name } },
       defaults: newFruit
-    }).spread((fruit, created) => ({
-      fruit: fruit.get({ plain: true }),
-      created
-    }));
+    }).spread(async (fruit, created) => {
+      if (!created) return { fruit: null, created };
+      fruit = fruit.get({ plain: true });
+      console.log('fruit: ', fruit);
+      return await addToHash(fruit.id, fruit.name, fruit.count)
+        .then(() => addToSortedSet(fruit.id, fruit.count))
+        .then(async () => {
+          const hashItem = await getFromHash(fruit.id);
+          console.log('hashItem: ', hashItem);
+          const sortedSet = await getSortedSet();
+          console.log('sortedSet: ', sortedSet);
+          return { fruit, created };
+        });
+    });
   }
 };
