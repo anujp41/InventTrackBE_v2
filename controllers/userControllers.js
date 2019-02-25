@@ -78,10 +78,13 @@ module.exports = {
     return User.findOrCreate({
       where: { name: { [Op.iLike]: name } },
       defaults: newUser
-    }).spread((user, created) => ({
-      user: user.get({ plain: true }),
-      created
-    }));
+    }).spread(async (user, created) => {
+      if (!created) return { user: null, created };
+      let userDetail = await this.getById(user.id);
+      userDetail = userDetail.get({ plain: true });
+      const userObj = { [userDetail.id]: userDetail };
+      return { user: userObj, created };
+    });
   }
   /*
   //FUNCTIONS BELOW ARE ATTEMPTS TO REWRITE FUNCTIONS ABOVE IN DIFFERENT WAY

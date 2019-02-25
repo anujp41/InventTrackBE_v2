@@ -28,10 +28,13 @@ router.get('/:id', (req, res) => {
 
 //Add new user
 router.post('/', (req, res, next) => {
+  const ioObj = req.app.get('socketIo');
   userControllers
     .saveUser(req.body)
     .then(({ user, created }) => {
       if (!created) return res.json({ msg: 'exists' });
+      ioObj.emit('newUser', user);
+      return res.json({ msg: 'done' });
     })
     .catch(next);
 });

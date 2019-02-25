@@ -92,7 +92,8 @@ router.post('/', (req, res, next) => {
     .saveFruit(req.body)
     .then(({ fruit, created }) => {
       if (!created) return res.json({ msg: 'exists' });
-      ioObj.emit('updateThis');
+      ioObj.emit('updateThis').emit('newFruit', fruit);
+      return res.json({ msg: 'done' });
     })
     .catch(next);
 });
