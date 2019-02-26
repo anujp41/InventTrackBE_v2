@@ -50,9 +50,24 @@ module.exports = {
               where: { fruitId: id, userId }
             })
           )
-          .then(userFruit => userFruit.increment('counter', { by: 1 }));
-        updateCount = updateCount.toJSON();
-        return { message: 'Completed', updateCount };
+          .then(async userFruit => {
+            if (userFruit === null) {
+              const newFruit = await UserFruit.create({
+                counter: 1,
+                fruitId: id,
+                userId
+              });
+              return newFruit;
+            } else {
+              return userFruit.increment('counter', { by: 1 });
+            }
+          });
+        // updateCount = updateCount.toJSON();
+        // console.log('updateCpunt ', updateCount);
+        return {
+          message: 'Completed',
+          updateCount: updateCount.get({ plain: true })
+        };
       }
     });
   },
